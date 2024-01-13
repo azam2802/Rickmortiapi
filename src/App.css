@@ -1,0 +1,32 @@
+.container{
+  width: 85%;
+  margin: 0 auto;
+}
+
+.character__block{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 50px;
+}
+
+.character__card{
+  padding-block: 10px;
+  padding-inline: 10px;
+  background-color: lightblue;
+  border-radius: 15px; 
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0px 5px 10px 0px;
+}
+
+.character__card h1{
+  text-transform: capitalize;
+  display: inline;
+}
+
+.character__card img{
+  width: 100px;
+  border-radius: 15px;
+}
