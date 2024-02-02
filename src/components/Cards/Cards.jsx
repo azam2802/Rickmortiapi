@@ -3,31 +3,44 @@ import { useState } from 'react'
 import Loader from '../Loader/Loader'
 import { useEffect } from 'react'
 import axios from 'axios'
-import Pagination from '../Pagination/Pagination'
 
 const Cards = () => {
 
-    const [page, setPage] = useState()
     const [data, setData] = useState([])
+    const [page, setPage] = useState(1)
     const [isLoading, setIsLoading] = useState(true)
+    const [fetching, setFetching] = useState(true)
+    const [totalPageCount, setTotalPageCount] = useState(0)
 
-    useEffect(()=>{
-        axios.get(`https://rickandmortyapi.com/api/character/?page=${page}`)
-        .then((res) => {
-          setData(res.data.results)
-          setIsLoading(false)
-          console.log(res.data);
-        })
-    }, [page])
+    useEffect(() => {
+        if (fetching) {
+            axios.get(`https://rickandmortyapi.com/api/character/?page=${page}`)
+                .then((res) => {
+                    setData([...data, ...res.data.results])
+                    setTotalPageCount(res.data.info.pages)
+                    setIsLoading(false)
+                    setPage(prevState => prevState + 1)
+                    console.log(res.data);
+                })
+                .finally(() => setFetching(false))
+        }
+    }, [fetching])
 
-    function handlePageChange(page){
-        console.log(page);
-        setPage(page)
+    useEffect(() => {
+        document.addEventListener('scroll', scrollHandler)
+        return function () {
+            document.removeEventListener('scroll', scrollHandler)
+        }
+    })
+
+    const scrollHandler = (e) => {
+        if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100 && page <= totalPageCount) {
+            setFetching(true)
+        }
     }
 
     return (
         <>
-            <Pagination onChange={handlePageChange}/>
             {
                 isLoading ? <Loader /> :
                     data.map((item) => (
